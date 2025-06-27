@@ -27,7 +27,7 @@ const createServer = () => {
             root: path.resolve('./')
         });
         fastify.register(require('@kne/fastify-puppeteer'), {
-            prefix: `/api/${version}/puppeteer`,
+            prefix: `/api/${version}`,
             maxCacheKeys: fastify.config.MAX_CACHE_KEYS,
             maxTaskSize: fastify.config.MAX_TASK_SIZE,
             pageWidth: fastify.config.PAGE_WIDTH,

@@ -46,16 +46,16 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 
 #### 接口概览
 
-| 接口名称 | 请求方法 | 请求路径                    | 描述 |
-|---------|---------|-------------------------|------|
-| parseHtmlToPdf | POST | /api/v1/puppeteer/parseHtmlToPdf | 将 HTML 内容转换为 PDF 文件 |
-| parseHtmlToPdfBatch | POST | /api/v1/puppeteer/parseHtmlToPdfBatch    | 批量将 HTML 内容转换为 PDF 文件（打包为 ZIP） |
-| parseHtmlToPhoto | POST | /api/v1/puppeteer/parseHtmlToPhoto       | 将 HTML 内容转换为图片 |
-| parseHtmlToPhotoBatch | POST | /api/v1/puppeteer/parseHtmlToPhotoBatch  | 批量将 HTML 内容转换为图片（打包为 ZIP） |
-| parseUrlToPdf | POST | /api/v1/puppeteer/parseUrlToPdf          | 将 URL 网页转换为 PDF 文件 |
-| parseUrlToPdfBatch | POST | /api/v1/puppeteer/parseUrlToPdfBatch     | 批量将 URL 网页转换为 PDF 文件（打包为 ZIP） |
-| parseUrlToPhoto | POST | /api/v1/puppeteer/parseUrlToPhoto        | 将 URL 网页转换为图片 |
-| parseUrlToPhotoBatch | POST | /api/v1/puppeteer/parseUrlToPhotoBatch   | 批量将 URL 网页转换为图片（打包为 ZIP） |
+| 接口名称 | 请求方法 | 请求路径                   | 描述 |
+|---------|---------|------------------------|------|
+| parseHtmlToPdf | POST | /api/v1/parseHtmlToPdf | 将 HTML 内容转换为 PDF 文件 |
+| parseHtmlToPdfBatch | POST | /api/v1/parseHtmlToPdfBatch | 批量将 HTML 内容转换为 PDF 文件（打包为 ZIP） |
+| parseHtmlToPhoto | POST | /api/v1/parseHtmlToPhoto  | 将 HTML 内容转换为图片 |
+| parseHtmlToPhotoBatch | POST | /api/v1/parseHtmlToPhotoBatch | 批量将 HTML 内容转换为图片（打包为 ZIP） |
+| parseUrlToPdf | POST | /api/v1/parseUrlToPdf     | 将 URL 网页转换为 PDF 文件 |
+| parseUrlToPdfBatch | POST | /api/v1/parseUrlToPdfBatch | 批量将 URL 网页转换为 PDF 文件（打包为 ZIP） |
+| parseUrlToPhoto | POST | /api/v1/parseUrlToPhoto  | 将 URL 网页转换为图片 |
+| parseUrlToPhotoBatch | POST | /api/v1/parseUrlToPhotoBatch | 批量将 URL 网页转换为图片（打包为 ZIP） |
 
 #### 接口详情
 
@@ -67,7 +67,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 将 HTML 内容转换为 PDF 文件 |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseHtmlToPdf |
+| 请求路径 | /api/v1/parseHtmlToPdf |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -87,7 +87,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 批量将 HTML 内容转换为 PDF 文件（打包为 ZIP） |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseHtmlToPdfBatch |
+| 请求路径 | /api/v1/parseHtmlToPdfBatch |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -107,7 +107,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 将 HTML 内容转换为图片 |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseHtmlToPhoto |
+| 请求路径 | /api/v1/parseHtmlToPhoto |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -127,7 +127,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 批量将 HTML 内容转换为图片（打包为 ZIP） |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseHtmlToPhotoBatch |
+| 请求路径 | /api/v1/parseHtmlToPhotoBatch |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -149,7 +149,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 将 URL 网页转换为 PDF 文件 |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseUrlToPdf |
+| 请求路径 | /api/v1/parseUrlToPdf |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -169,7 +169,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 批量将 URL 网页转换为 PDF 文件（打包为 ZIP） |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseUrlToPdfBatch |
+| 请求路径 | /api/v1/parseUrlToPdfBatch |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -189,7 +189,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 将 URL 网页转换为图片 |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseUrlToPhoto |
+| 请求路径 | /api/v1/parseUrlToPhoto |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
@@ -210,7 +210,7 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 |------|------|
 | 接口描述 | 批量将 URL 网页转换为图片（打包为 ZIP） |
 | 请求方法 | POST |
-| 请求路径 | /api/v1/puppeteer/parseUrlToPhotoBatch |
+| 请求路径 | /api/v1/parseUrlToPhotoBatch |
 | 认证方式 | 根据配置的 authenticate 函数 |
 | 请求参数 | JSON 对象 |
 
