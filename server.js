@@ -1,0 +1,49 @@
+const path = require('node:path');
+const fp = require('fastify-plugin');
+const fastifyEnv = require('@fastify/env');
+const fastify = require('fastify')({
+    logger: true, querystringParser: str => require('qs').parse(str)
+});
+
+const packageJson = require('./package.json');
+
+const version = `v${packageJson.version.split('.')[0]}`;
+
+const createServer = () => {
+    fastify.register(fastifyEnv, {
+        dotenv: true, schema: {
+            type: 'object', properties: {
+                PORT: {type: 'number', default: 8040},
+                MAX_CACHE_KEYS: {type: 'number', default: 1000},
+                MAX_TASK_SIZE: {type: 'number', default: 100},
+                PAGE_WIDTH: {type: 'number', default: 1366},
+                PAGE_HEIGHT: {type: 'number', default: 768},
+            }
+        }
+    });
+
+    fastify.register(fp(async fastify => {
+        fastify.register(require('@fastify/static'), {
+            root: path.resolve('./')
+        });
+        fastify.register(require('@kne/fastify-puppeteer'), {
+            prefix: `/api/${version}/puppeteer`,
+            maxCacheKeys: fastify.config.MAX_CACHE_KEYS,
+            maxTaskSize: fastify.config.MAX_TASK_SIZE,
+            pageWidth: fastify.config.PAGE_WIDTH,
+            pageHeight: fastify.config.PAGE_HEIGHT,
+        });
+    }));
+};
+
+module.exports = {
+    fastify, createServer, start: () => {
+        createServer();
+        return fastify.then(() => {
+            fastify.listen({port: fastify.config.PORT, host: '0.0.0.0'}, (err, address) => {
+                if (err) throw err;
+                console.log(`Server is now listening on ${address}`);
+            });
+        });
+    }
+};
