@@ -18,6 +18,7 @@ const createServer = () => {
                 MAX_TASK_SIZE: {type: 'number', default: 100},
                 PAGE_WIDTH: {type: 'number', default: 1366},
                 PAGE_HEIGHT: {type: 'number', default: 768},
+                SANDBOX_DISABLED: {type: 'boolean', default: true}
             }
         }
     });
@@ -26,12 +27,22 @@ const createServer = () => {
         fastify.register(require('@fastify/static'), {
             root: path.resolve('./')
         });
+
+        const args = [];
+
+        if (fastify.config.SANDBOX_DISABLED) {
+            args.push('--no-sandbox', '--disable-setuid-sandbox');
+        }
+
         fastify.register(require('@kne/fastify-puppeteer'), {
             prefix: `/api/${version}`,
             maxCacheKeys: fastify.config.MAX_CACHE_KEYS,
             maxTaskSize: fastify.config.MAX_TASK_SIZE,
             pageWidth: fastify.config.PAGE_WIDTH,
             pageHeight: fastify.config.PAGE_HEIGHT,
+            puppeteerOptions: {
+                args
+            }
         });
     }));
 };
