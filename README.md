@@ -81,270 +81,221 @@ docker run --name node-webpage-print -p 8047:8040 -e PORT=8040 -e PAGE_WIDTH=192
 
 ### API
 
-### API 文档
+#### 接口概览
 
-#### 概述
-Node Webpage Print 服务提供了一系列RESTful API接口，用于将HTML内容或URL转换为PDF或图片格式。所有API都使用POST方法，并接受JSON格式的请求体。
+| 接口名称 | 请求方法 | 请求路径 | 描述 |
+|---------|---------|---------|------|
+| parseHtmlToPdf | POST | /parseHtmlToPdf | 将 HTML 内容转换为 PDF 文件 |
+| parseHtmlToPdfBatch | POST | /parseHtmlToPdfBatch | 批量将 HTML 内容转换为 PDF 文件（打包为 ZIP） |
+| parseHtmlToPhoto | POST | /parseHtmlToPhoto | 将 HTML 内容转换为图片 |
+| parseHtmlToPhotoBatch | POST | /parseHtmlToPhotoBatch | 批量将 HTML 内容转换为图片（打包为 ZIP） |
+| parseUrlToPdf | POST | /parseUrlToPdf | 将 URL 网页转换为 PDF 文件 |
+| parseUrlToPdfBatch | POST | /parseUrlToPdfBatch | 批量将 URL 网页转换为 PDF 文件（打包为 ZIP） |
+| parseUrlToPhoto | POST | /parseUrlToPhoto | 将 URL 网页转换为图片 |
+| parseUrlToPhotoBatch | POST | /parseUrlToPhotoBatch | 批量将 URL 网页转换为图片（打包为 ZIP） |
 
-#### 通用参数
+#### 接口详情
 
-##### 页面设置参数
-所有API都支持以下页面设置参数：
+##### HTML 转换接口
 
-| 参数名 | 类型 | 必填 | 默认值 | 描述 |
-|--------|------|------|--------|------|
-| format | string | 否 | A4 | 页面格式，如 'A4', 'Letter', 'Legal' 等 |
-| width | number/string | 否 | - | 页面宽度，如 '8.5in' 或 794 (像素) |
-| height | number/string | 否 | - | 页面高度，如 '11in' 或 1123 (像素) |
-| margin | object | 否 | - | 页面边距 |
-| margin.top | number/string | 否 | 0 | 上边距，如 '1cm' 或 40 (像素) |
-| margin.right | number/string | 否 | 0 | 右边距，如 '1cm' 或 40 (像素) |
-| margin.bottom | number/string | 否 | 0 | 下边距，如 '1cm' 或 40 (像素) |
-| margin.left | number/string | 否 | 0 | 左边距，如 '1cm' 或 40 (像素) |
-| landscape | boolean | 否 | false | 是否使用横向布局 |
-| scale | number | 否 | 1 | 页面缩放比例，范围 0.1 到 2 |
+###### parseHtmlToPdf
 
-##### PDF 特有参数
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 将 HTML 内容转换为 PDF 文件 |
+| 请求方法 | POST |
+| 请求路径 | /parseHtmlToPdf |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-| 参数名 | 类型 | 必填 | 默认值 | 描述 |
-|--------|------|------|--------|------|
-| printBackground | boolean | 否 | true | 是否打印背景图形 |
-| displayHeaderFooter | boolean | 否 | false | 是否显示页眉和页脚 |
-| headerTemplate | string | 否 | - | 页眉的HTML模板 |
-| footerTemplate | string | 否 | - | 页脚的HTML模板 |
-| preferCSSPageSize | boolean | 否 | false | 是否优先使用CSS定义的页面尺寸 |
-
-##### 图片特有参数
-
-| 参数名 | 类型 | 必填 | 默认值 | 描述 |
-|--------|------|------|--------|------|
-| type | string | 否 | png | 图片类型，支持 'png', 'jpeg', 'webp' |
-| quality | number | 否 | 80 | 图片质量，仅适用于 jpeg 和 webp，范围 0-100 |
-| fullPage | boolean | 否 | true | 是否捕获完整页面，false 则只捕获可视区域 |
-| omitBackground | boolean | 否 | false | 是否省略背景 |
-| clip | object | 否 | - | 裁剪区域 |
-| clip.x | number | 是(如果使用clip) | - | 裁剪区域左上角的x坐标 |
-| clip.y | number | 是(如果使用clip) | - | 裁剪区域左上角的y坐标 |
-| clip.width | number | 是(如果使用clip) | - | 裁剪区域的宽度 |
-| clip.height | number | 是(如果使用clip) | - | 裁剪区域的高度 |
-
-#### API 端点
-
-### HTML 转 PDF
-
-```
-POST /html-to-pdf
-```
-
-将HTML内容转换为PDF文档。
-
-#### 请求参数
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| content | string | 是 | 要转换的HTML内容 |
-| options | object | 否 | 页面设置和PDF选项 |
+|-------|------|------|------|
+| content | string | 是 | 需要转换的 HTML 内容 |
+| options | object | 否 | PDF 生成选项，参考 Puppeteer API |
 
-#### 响应
+**响应结果：**
+- 返回生成的 PDF 文件流
 
-成功时返回PDF文件的二进制数据，Content-Type为`application/pdf`。
+###### parseHtmlToPdfBatch
 
-#### 示例请求
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 批量将 HTML 内容转换为 PDF 文件（打包为 ZIP） |
+| 请求方法 | POST |
+| 请求路径 | /parseHtmlToPdfBatch |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-```json
-{
-  "content": "<html><body><h1>Hello World</h1></body></html>",
-  "options": {
-    "format": "A4",
-    "margin": {
-      "top": "1cm",
-      "right": "1cm",
-      "bottom": "1cm",
-      "left": "1cm"
-    },
-    "printBackground": true
-  }
-}
-```
-
-### URL 转 PDF
-
-```
-POST /url-to-pdf
-```
-
-将指定URL的网页转换为PDF文档。
-
-#### 请求参数
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| url | string | 是 | 要转换的网页URL |
-| options | object | 否 | 页面设置和PDF选项 |
-| waitUntil | string | 否 | 等待页面加载的事件，可选值: 'load', 'domcontentloaded', 'networkidle0', 'networkidle2' |
-| timeout | number | 否 | 页面加载超时时间(毫秒) |
+|-------|------|------|------|
+| contentList | array | 是 | 需要转换的 HTML 内容列表 |
+| options | object | 否 | PDF 生成选项，参考 Puppeteer API |
 
-#### 响应
+**响应结果：**
+- 返回包含所有生成 PDF 的 ZIP 文件流
 
-成功时返回PDF文件的二进制数据，Content-Type为`application/pdf`。
+###### parseHtmlToPhoto
 
-#### 示例请求
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 将 HTML 内容转换为图片 |
+| 请求方法 | POST |
+| 请求路径 | /parseHtmlToPhoto |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-```json
-{
-  "url": "https://example.com",
-  "options": {
-    "format": "A4",
-    "landscape": true
-  },
-  "waitUntil": "networkidle2",
-  "timeout": 30000
-}
-```
-
-### HTML 转图片
-
-```
-POST /html-to-image
-```
-
-将HTML内容转换为图片。
-
-#### 请求参数
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| content | string | 是 | 要转换的HTML内容 |
-| options | object | 否 | 页面设置和图片选项 |
+|-------|------|------|------|
+| content | string | 是 | 需要转换的 HTML 内容 |
+| options | object | 否 | 图片生成选项，参考 Puppeteer API |
 
-#### 响应
+**响应结果：**
+- 返回生成的图片文件流
 
-成功时返回图片的二进制数据，Content-Type根据选择的图片类型而定。
+###### parseHtmlToPhotoBatch
 
-#### 示例请求
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 批量将 HTML 内容转换为图片（打包为 ZIP） |
+| 请求方法 | POST |
+| 请求路径 | /parseHtmlToPhotoBatch |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-```json
-{
-  "content": "<html><body><h1>Hello World</h1></body></html>",
-  "options": {
-    "type": "jpeg",
-    "quality": 90,
-    "fullPage": true
-  }
-}
-```
-
-### URL 转图片
-
-```
-POST /url-to-image
-```
-
-将指定URL的网页转换为图片。
-
-#### 请求参数
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| url | string | 是 | 要转换的网页URL |
-| options | object | 否 | 页面设置和图片选项 |
-| waitUntil | string | 否 | 等待页面加载的事件，可选值: 'load', 'domcontentloaded', 'networkidle0', 'networkidle2' |
-| timeout | number | 否 | 页面加载超时时间(毫秒) |
+|-------|------|------|------|
+| contentList | array | 是 | 需要转换的 HTML 内容列表 |
+| options | object | 否 | 图片生成选项，参考 Puppeteer API |
 
-#### 响应
+**响应结果：**
+- 返回包含所有生成图片的 ZIP 文件流
 
-成功时返回图片的二进制数据，Content-Type根据选择的图片类型而定。
+##### URL 转换接口
 
-#### 示例请求
+###### parseUrlToPdf
 
-```json
-{
-  "url": "https://example.com",
-  "options": {
-    "type": "png",
-    "fullPage": false,
-    "clip": {
-      "x": 0,
-      "y": 0,
-      "width": 1280,
-      "height": 800
-    }
-  },
-  "waitUntil": "networkidle2"
-}
-```
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 将 URL 网页转换为 PDF 文件 |
+| 请求方法 | POST |
+| 请求路径 | /parseUrlToPdf |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-### 批量处理
-
-```
-POST /batch
-```
-
-批量处理多个转换任务。
-
-#### 请求参数
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| tasks | array | 是 | 任务数组 |
+|-------|------|------|------|
+| url | string | 是 | 需要转换的网页 URL |
+| options | object | 否 | PDF 生成选项，参考 Puppeteer API 和 URL 转换特有选项 |
 
-每个任务对象的格式如下：
+**响应结果：**
+- 返回生成的 PDF 文件流
+
+###### parseUrlToPdfBatch
+
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 批量将 URL 网页转换为 PDF 文件（打包为 ZIP） |
+| 请求方法 | POST |
+| 请求路径 | /parseUrlToPdfBatch |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
+
+**请求参数详情：**
 
 | 参数名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| type | string | 是 | 任务类型，可选值: 'html-to-pdf', 'url-to-pdf', 'html-to-image', 'url-to-image' |
-| params | object | 是 | 与单个API相同的参数对象 |
+|-------|------|------|------|
+| urlList | array | 是 | 需要转换的网页 URL 列表 |
+| options | object | 否 | PDF 生成选项，参考 Puppeteer API 和 URL 转换特有选项 |
 
-#### 响应
+**响应结果：**
+- 返回包含所有生成 PDF 的 ZIP 文件流
 
-成功时返回一个包含所有任务结果的ZIP文件，Content-Type为`application/zip`。
+###### parseUrlToPhoto
 
-#### 示例请求
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 将 URL 网页转换为图片 |
+| 请求方法 | POST |
+| 请求路径 | /parseUrlToPhoto |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-```json
-{
-  "tasks": [
-    {
-      "type": "html-to-pdf",
-      "params": {
-        "content": "<html><body><h1>Document 1</h1></body></html>",
-        "options": {
-          "format": "A4"
-        }
-      }
-    },
-    {
-      "type": "url-to-image",
-      "params": {
-        "url": "https://example.com",
-        "options": {
-          "type": "png",
-          "fullPage": true
-        }
-      }
-    }
-  ]
-}
-```
+**请求参数详情：**
 
-### 错误处理
+| 参数名 | 类型 | 必填 | 描述 |
+|-------|------|------|------|
+| url | string | 是 | 需要转换的网页 URL |
+| selector | string | 否 | 页面元素选择器，指定截图区域。如果提供，将只截取该元素区域 |
+| options | object | 否 | 图片生成选项，参考 Puppeteer API 和 URL 转换特有选项 |
 
-当API请求失败时，服务将返回适当的HTTP状态码和JSON格式的错误信息：
+**响应结果：**
+- 返回生成的图片文件流
 
-```json
-{
-  "statusCode": 400,
-  "error": "Bad Request",
-  "message": "错误详情"
-}
-```
+###### parseUrlToPhotoBatch
 
-常见的错误状态码：
+| 项目 | 说明 |
+|------|------|
+| 接口描述 | 批量将 URL 网页转换为图片（打包为 ZIP） |
+| 请求方法 | POST |
+| 请求路径 | /parseUrlToPhotoBatch |
+| 认证方式 | 根据配置的 authenticate 函数 |
+| 请求参数 | JSON 对象 |
 
-| 状态码 | 描述 |
-|--------|------|
-| 400 | 请求参数无效 |
-| 404 | 请求的资源不存在 |
-| 408 | 请求超时 |
-| 500 | 服务器内部错误 |
+**请求参数详情：**
+
+| 参数名 | 类型 | 必填 | 描述 |
+|-------|------|------|------|
+| urlList | array | 是 | 需要转换的网页 URL 列表 |
+| selector | string | 否 | 页面元素选择器，指定截图区域。如果提供，将只截取该元素区域 |
+| options | object | 否 | 图片生成选项，参考 Puppeteer API 和 URL 转换特有选项 |
+
+**响应结果：**
+- 返回包含所有生成图片的 ZIP 文件流
+
+### 选项参数说明
+
+#### PDF 生成选项
+
+PDF 生成选项参考 Puppeteer 的 [page.pdf()](https://pptr.dev/api/puppeteer.page.pdf) 方法参数，常用选项包括：
+
+| 选项名 | 类型 | 描述 |
+|-------|------|------|
+| format | string | 纸张格式，如 'A4', 'Letter' 等 |
+| width | string | 纸张宽度，如 '8.5in' |
+| height | string | 纸张高度，如 '11in' |
+| margin | object | 页面边距，包含 top, right, bottom, left 属性 |
+| printBackground | boolean | 是否打印背景图形 |
+| landscape | boolean | 是否使用横向打印 |
+
+#### 图片生成选项
+
+图片生成选项参考 Puppeteer 的 [page.screenshot()](https://pptr.dev/api/puppeteer.page.screenshot) 方法参数，常用选项包括：
+
+| 选项名 | 类型 | 描述 |
+|-------|------|------|
+| type | string | 图片格式，如 'png', 'jpeg' |
+| quality | number | 图片质量 (0-100)，仅适用于 JPEG |
+| fullPage | boolean | 是否捕获完整页面 |
+| clip | object | 裁剪区域，包含 x, y, width, height 属性 |
+| omitBackground | boolean | 是否隐藏默认白色背景 |
+
+#### URL 转换特有选项
+
+以下选项适用于 parseUrlToPdf、parseUrlToPdfBatch、parseUrlToPhoto 和 parseUrlToPhotoBatch 接口：
+
+| 选项名 | 类型 | 描述 |
+|-------|------|------|
+| waitForSelectors | array | 等待页面中特定元素出现的选择器数组，在继续处理前会等待这些元素加载完成 |
+| waitForVisible | boolean | 是否等待元素可见，默认为 false，仅检查元素是否存在于 DOM 中 |
+| waitForMaxTime | number | 等待元素出现的最大时间（毫秒），默认为 10000（10秒） |
 
