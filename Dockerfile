@@ -1,9 +1,22 @@
 FROM ghcr.io/puppeteer/puppeteer:latest
 
 # 安装字体配置工具
-RUN apt-get update && apt-get install -y \
+# 切换到root用户
+USER root
+
+# 修复权限问题
+RUN mkdir -p /var/lib/apt/lists/partial && \
+    chmod -R 777 /var/lib/apt/lists/
+
+# 更新并安装软件包
+RUN apt-get update && \
+    apt-get install -y \
     fontconfig \
-    --no-install-recommends
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+# 切换回非root用户（可选）
+USER nonrootuser
 
 # 将字体文件复制到镜像中
 COPY fonts/PingFang.ttc /usr/share/fonts/
