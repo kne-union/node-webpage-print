@@ -21,6 +21,24 @@ COPY fonts/PingFang.ttc /usr/share/fonts/
 # 更新字体缓存
 RUN fc-cache -vf
 
+# 设置苹方为系统默认字体（通过修改fontconfig配置）
+RUN mkdir -p /etc/fonts/conf.d && \
+    echo '<?xml version="1.0"?> \
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd"> \
+    <fontconfig> \
+        <match target="pattern"> \
+            <test qual="any" name="family"> \
+                <string>sans-serif</string> \
+            </test> \
+            <edit name="family" mode="prepend" binding="strong"> \
+                <string>PingFang SC</string> \
+            </edit> \
+        </match> \
+    </fontconfig>' > /etc/fonts/conf.d/65-pingfang.conf
+
+# 验证字体安装
+RUN fc-list | grep "PingFang"
+
 WORKDIR /node-app
 
 COPY ./package.json ./
