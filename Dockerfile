@@ -15,9 +15,6 @@ RUN apt-get update && \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# 切换回非root用户（可选）
-USER nonrootuser
-
 # 将字体文件复制到镜像中
 COPY fonts/PingFang.ttc /usr/share/fonts/
 
