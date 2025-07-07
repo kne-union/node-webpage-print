@@ -47,13 +47,14 @@ docker run --name node-webpage-print -p 8047:8040 -d --restart=always ghcr.io/kn
 
 可以通过环境变量自定义服务的行为：
 
-| 环境变量           | 描述       | 默认值  |
-|----------------|----------|------|
-| PORT           | 服务器端口    | 8040 |
-| MAX_CACHE_KEYS | 最大缓存键数   | 1000 |
-| MAX_TASK_SIZE  | 最大任务数    | 100  |
-| PAGE_WIDTH     | 页面宽度（像素） | 1366 |
-| PAGE_HEIGHT    | 页面高度（像素） | 768  |
+| 环境变量           | 描述              | 默认值  |
+|----------------|-----------------|------|
+| PORT           | 服务器端口           | 8040 |
+| MAX_CACHE_KEYS | 最大缓存键数          | 1000 |
+| MAX_TASK_SIZE  | 最大任务数           | 100  |
+| PAGE_WIDTH     | 页面宽度（像素）        | 1366 |
+| PAGE_HEIGHT    | 页面高度（像素）        | 768  |
+| MAX_CONCURRENT | 批量任务，单次请求最大并发数量 | 10   |
 
 示例：
 
