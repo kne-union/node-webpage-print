@@ -13,9 +13,10 @@ const createServer = () => {
     fastify.register(fastifyEnv, {
         dotenv: true, schema: {
             type: 'object', properties: {
-                PORT: {type: 'number', default: 8040},
+                PORT: {type: 'number', default: 8049},
                 MAX_CACHE_KEYS: {type: 'number', default: 1000},
                 MAX_TASK_SIZE: {type: 'number', default: 100},
+                MAX_CONCURRENT: {type: 'number', default: 10},
                 PAGE_WIDTH: {type: 'number', default: 1366},
                 PAGE_HEIGHT: {type: 'number', default: 768},
                 SANDBOX_DISABLED: {type: 'boolean', default: true}
@@ -40,6 +41,7 @@ const createServer = () => {
             maxTaskSize: fastify.config.MAX_TASK_SIZE,
             pageWidth: fastify.config.PAGE_WIDTH,
             pageHeight: fastify.config.PAGE_HEIGHT,
+            maxConcurrent: fastify.config.MAX_CONCURRENT,
             puppeteerOptions: {
                 args
             }
