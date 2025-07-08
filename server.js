@@ -13,7 +13,7 @@ const createServer = () => {
     fastify.register(fastifyEnv, {
         dotenv: true, schema: {
             type: 'object', properties: {
-                PORT: {type: 'number', default: 8049},
+                PORT: {type: 'number', default: 8040},
                 MAX_CACHE_KEYS: {type: 'number', default: 1000},
                 MAX_TASK_SIZE: {type: 'number', default: 100},
                 MAX_CONCURRENT: {type: 'number', default: 10},
