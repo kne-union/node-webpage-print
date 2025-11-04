@@ -8,7 +8,7 @@ const getParams = () => {
   try {
     return {
       locale: locale || 'zh-CN',
-      themeColor,
+      themeColor: themeColor || '#4183F0',
       content: content ? decode(content) : '',
       scope: scope ? JSON.parse(decode(scope)) : {},
       props: Object.assign({}, props, encodeProps ? JSON.parse(decode(encodeProps)) : {})

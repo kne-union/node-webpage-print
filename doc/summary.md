@@ -43,6 +43,12 @@ docker run --name node-webpage-print -p 8047:8040 -d --restart=always ghcr.io/kn
 
 这将启动一个名为 `node-webpage-print` 的容器，并将服务映射到本地的 8047 端口。
 
+#### 新增远程组件渲染
+
+1. 访问 http://localhost:8047/editor
+2. 配置页面，选择想要输出的类型
+3. 复制链接或者点击预览
+
 #### 环境变量配置
 
 可以通过环境变量自定义服务的行为：
