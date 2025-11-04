@@ -15,6 +15,7 @@ module.exports = fp(async (fastify, options) => {
   }, async (request, reply) => {
     const filename = await services.parseUrlToPdf({
       url: `http://localhost:${fastify.config.PORT}?${qs.stringify(pick(request.query, ['content', 'scope', 'props', 'encodeProps']))}`,
+      selector: request.query.options?.selector,
       options: request.query.options
     });
     return reply.sendFile(filename, { root: options.root });
@@ -31,6 +32,7 @@ module.exports = fp(async (fastify, options) => {
   }, async (request, reply) => {
     const filename = await services.parseUrlToPhoto({
       url: `http://localhost:${fastify.config.PORT}?${qs.stringify(pick(request.query, ['content', 'scope', 'props', 'encodeProps']))}`,
+      selector: request.query.options?.selector,
       options: request.query.options
     });
     return reply.sendFile(filename, { root: options.root });
