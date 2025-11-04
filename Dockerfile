@@ -39,16 +39,27 @@ RUN mkdir -p /etc/fonts/conf.d && \
 # 验证字体安装
 RUN fc-list | grep "PingFang"
 
+COPY ./package.json /app_build/
+
+COPY ./server/package.json /node-app/
+
+RUN cd /app_build && npm install
+
+RUN cd /node-app && npm install --production
+
+WORKDIR /app_build
+
+COPY . .
+
+RUN npm run build
+
 WORKDIR /node-app
 
-COPY ./package.json ./
+COPY ./server/* ./
 
-RUN npm install --production
-
-COPY ./index.js ./
-COPY ./server.js ./
+RUN cp -r /app_build/build ./build
 
 EXPOSE 8040
 
 # 启动应用
-CMD ["node", "index.js"]
+CMD ["npm", "run", "start"]

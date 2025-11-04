@@ -1,0 +1,13 @@
+.error-message {
+  pre {
+    display: block;
+    padding: 0.5rem;
+    background: #ff5555;
+    color: #f8f8f2;
+    white-space: pre-wrap;
+    text-align: left;
+    font-size: 0.9em;
+    font-family: 'Source Code Pro', monospace;
+    margin: 0;
+  }
+}
