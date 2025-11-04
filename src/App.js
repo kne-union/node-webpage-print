@@ -11,7 +11,7 @@ const App = () => {
     </div>;
   }
   const moduleNames = Object.keys(scope);
-  return <LiveComponent props={props} themeToken={{ colorPrimary: themeColor || '#4183F0' }} locale={locale}
+  return <LiveComponent props={props} themeToken={{ colorPrimary: themeColor }} locale={locale}
                         modules={moduleNames.map((name) => scope[name]).concat(['components-core:Global@PureGlobal'])}
                         children={{ content, moduleNames: moduleNames.concat(['PureGlobal']) }} />;
 };

@@ -1,6 +1,6 @@
 const fp = require('fastify-plugin');
 const qs = require('qs');
-const pick = require('lodash/pick');
+const omit = require('lodash/omit');
 
 module.exports = fp(async (fastify, options) => {
   const { services } = fastify.puppeteer;
@@ -14,7 +14,7 @@ module.exports = fp(async (fastify, options) => {
     }
   }, async (request, reply) => {
     const filename = await services.parseUrlToPdf({
-      url: `http://localhost:${fastify.config.PORT}?${qs.stringify(pick(request.query, ['content', 'scope', 'props', 'encodeProps']))}`,
+      url: `http://localhost:${fastify.config.PORT}?${qs.stringify(omit(request.query, ['options']))}`,
       selector: request.query.options?.selector,
       options: request.query.options
     });
@@ -31,7 +31,7 @@ module.exports = fp(async (fastify, options) => {
     }
   }, async (request, reply) => {
     const filename = await services.parseUrlToPhoto({
-      url: `http://localhost:${fastify.config.PORT}?${qs.stringify(pick(request.query, ['content', 'scope', 'props', 'encodeProps']))}`,
+      url: `http://localhost:${fastify.config.PORT}?${qs.stringify(omit(request.query, ['options']))}`,
       selector: request.query.options?.selector,
       options: request.query.options
     });
