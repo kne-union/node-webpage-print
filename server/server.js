@@ -41,6 +41,9 @@ const createServer = () => {
       maxConcurrent: fastify.config.MAX_CONCURRENT,
       puppeteerOptions: {
         args
+      },
+      pageViewport: {
+        deviceScaleFactor: 2
       }
     });
 
