@@ -20,14 +20,13 @@ const createServer = () => {
         MAX_CONCURRENT: { type: 'number', default: 10 },
         PAGE_WIDTH: { type: 'number', default: 1366 },
         PAGE_HEIGHT: { type: 'number', default: 768 },
-        SANDBOX_DISABLED: { type: 'boolean', default: true },
-        TIMEZONE: { type: 'string', default: 'Asia/Shanghai' }
+        SANDBOX_DISABLED: { type: 'boolean', default: true }
       }
     }
   });
 
   fastify.register(fp(async fastify => {
-    const args = [`--timezone=${fastify.config.TIMEZONE || 'Asia/Shanghai'}`];
+    const args = [];
 
     if (fastify.config.SANDBOX_DISABLED) {
       args.push('--no-sandbox', '--disable-setuid-sandbox');
