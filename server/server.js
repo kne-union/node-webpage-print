@@ -26,7 +26,7 @@ const createServer = () => {
   });
 
   fastify.register(fp(async fastify => {
-    const args = [];
+    const args = ['--timezone=Asia/Shanghai'];
 
     if (fastify.config.SANDBOX_DISABLED) {
       args.push('--no-sandbox', '--disable-setuid-sandbox');
