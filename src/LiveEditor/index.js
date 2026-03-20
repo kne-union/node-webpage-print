@@ -4,6 +4,8 @@ import { EyeOutlined } from '@ant-design/icons';
 import qs from 'qs';
 import { encode } from 'plantuml-encoder';
 import { createWithRemoteLoader } from '@kne/remote-loader';
+import lodash from 'lodash';
+import dayjs from 'dayjs';
 
 const defaultContent = encode(JSON.stringify({
   props: {
@@ -91,7 +93,7 @@ const LiveEditor = createWithRemoteLoader({
         </Flex>
       }]} />
     </Card>
-    <LiveComponentEditor defaultValue={value} onChange={setValue} />
+    <LiveComponentEditor defaultValue={value} onChange={setValue} libs={{ lodash, dayjs, qs }}/>
   </Flex>;
 });
 
