@@ -81,6 +81,7 @@ const createServer = () => {
       }
     });
   }));
+  fastify.register(require('@kne/fastify-response-data-format'));
 };
 
 module.exports = {
