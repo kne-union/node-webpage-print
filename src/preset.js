@@ -1,10 +1,24 @@
 import { preset as remoteLoaderPreset } from '@kne/remote-loader';
-
+import { preset as fetchPreset } from '@kne/react-fetch';
+import createAjax from '@kne/axios-fetch';
 
 window.PUBLIC_URL = window.runtimePublicUrl || process.env.PUBLIC_URL;
-
+const baseApiUrl = window.runtimeApiUrl || '';
 
 export const globalInit = async () => {
+  const ajax = createAjax({
+    baseURL: baseApiUrl
+  });
+  fetchPreset({
+    ajax, transformResponse: response => {
+      const { data } = response;
+      response.data = {
+        code: data.code === 0 ? 200 : data.code, msg: data.msg, results: data.data
+      };
+      return response;
+    }
+  });
+
   const registry = {
     url: 'https://cdn.leapin-ai.com', tpl: '{{url}}/components/@kne-components/{{remote}}/{{version}}/build'
   };
