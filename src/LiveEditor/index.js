@@ -1,19 +1,20 @@
-import CodeEditor, { loader } from '@monaco-editor/react';
-import { Flex, Typography, Card, Tabs, Button, Segmented, Descriptions, ColorPicker, Alert, Input } from 'antd';
+import { Flex, Typography, Card, Button, Segmented, Descriptions, ColorPicker, Alert, Input } from 'antd';
 import { useState } from 'react';
 import { EyeOutlined } from '@ant-design/icons';
-import ensureSlash from '@kne/ensure-slash';
-import getParams from '../getParams';
 import qs from 'qs';
 import { encode } from 'plantuml-encoder';
-import merge from 'lodash/merge';
-import omitBy from 'lodash/omitBy';
-import isEmpty from 'lodash/isEmpty';
+import { createWithRemoteLoader } from '@kne/remote-loader';
 
-loader.config({ paths: { vs: `${ensureSlash(window.PUBLIC_URL)}/monaco-editor/min/vs` } });
-
-const defaultParams = merge({}, {
-  content: `<div id="print-el" style={{width: '500px',height:'400px',padding:'12px'}}>
+const defaultContent = encode(JSON.stringify({
+  props: {
+    title: {
+      type: 'string', defaultValue: '测试标题'
+    }, content: {
+      type: 'string', defaultValue: '测试内容'
+    }
+  }, scope: {
+    'InfoPage': 'components-core:InfoPage'
+  }, content: `<div id="print-el" style={{ width: '500px', height: '400px', padding: '12px' }}>
   <InfoPage>
     <InfoPage.Part title={props.title}>
       {props.content}
@@ -24,25 +25,27 @@ const defaultParams = merge({}, {
       </Antd.Flex>
     </InfoPage.Part>
   </InfoPage>
-</div>;`, props: {
-    title: '测试标题', content: '测试内容'
-  }, scope: {
-    'InfoPage': 'components-core:InfoPage'
-  }, selector: '#print-el'
-}, omitBy(getParams(), isEmpty));
+</div>`
+}));
 
-const LiveEditor = () => {
-  const [params, setParams] = useState(defaultParams);
+
+const LiveEditor = createWithRemoteLoader({
+  modules: ['components-thirdparty:LiveComponentEditor']
+})(({ remoteModules }) => {
+  const [LiveComponentEditor] = remoteModules;
+  const searchParams = qs.parse(window.location.search.slice(1));
+  const [params, setParams] = useState({ content: defaultContent, selector: 'print-el' });
   const [outputType, setOutputType] = useState('/');
-  const { content, props, scope, themeColor, locale, selector } = params;
+  const { content, props, themeColor, locale, selector } = params;
+  const [value, setValue] = useState(searchParams.content || content);
 
   const targetUrl = `${window.location.origin}${outputType}?${qs.stringify({
-    content: encode(content), props, scope: encode(JSON.stringify(scope)), themeColor, locale, options: {
+    content: value, props, themeColor, locale, options: {
       selector: selector
     }
   })}`;
 
-  return <Flex vertical gap={8}>
+  return <Flex vertical gap={8} style={{ padding: '24px' }}>
     <Card size="small" title="访问地址">
       <Flex vertical gap={4}>
         <div>
@@ -88,48 +91,8 @@ const LiveEditor = () => {
         </Flex>
       }]} />
     </Card>
-    <Tabs defaultActiveKey="content" items={[{
-      key: 'props',
-      label: '组件参数',
-      children: <CodeEditor height={500} defaultLanguage="json" defaultValue={JSON.stringify(props, null, 2)}
-                            onChange={(str) => {
-                              try {
-                                const props = JSON.parse(str);
-                                setParams((params) => {
-                                  return Object.assign({}, params, {
-                                    props
-                                  });
-                                });
-                              } catch (e) {
-                              }
-                            }} />
-    }, {
-      key: 'scope',
-      label: '组件域',
-      children: <CodeEditor height={500} defaultLanguage="json" defaultValue={JSON.stringify(scope, null, 2)}
-                            onChange={(str) => {
-                              try {
-                                const scope = JSON.parse(str);
-                                setParams((params) => {
-                                  return Object.assign({}, params, {
-                                    scope
-                                  });
-                                });
-                              } catch (e) {
-                              }
-                            }} />
-    }, {
-      key: 'content',
-      label: '组件内容',
-      children: <CodeEditor height={500} defaultLanguage="javascript" defaultValue={content} onChange={(str) => {
-        setParams((params) => {
-          return Object.assign({}, params, {
-            content: str
-          });
-        });
-      }} />
-    }]}></Tabs>
+    <LiveComponentEditor defaultValue={value} onChange={setValue} />
   </Flex>;
-};
+});
 
 export default LiveEditor;
