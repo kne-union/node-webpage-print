@@ -1,19 +1,14 @@
-import LiveComponent from './LiveComponent';
-import getParams from './getParams';
+import { createWithRemoteLoader } from '@kne/remote-loader';
 import './index.scss';
+import qs from 'qs';
 
 
-const App = () => {
-  const { content, scope, props, themeColor, locale, error } = getParams();
-  if (error) {
-    return <div className="error-message">
-      <pre>{error}</pre>
-    </div>;
-  }
-  const moduleNames = Object.keys(scope);
-  return <LiveComponent props={props} themeToken={{ colorPrimary: themeColor }} locale={locale}
-                        modules={moduleNames.map((name) => scope[name]).concat(['components-core:Global@PureGlobal'])}
-                        children={{ content, moduleNames: moduleNames.concat(['PureGlobal']) }} />;
-};
+const App = createWithRemoteLoader({
+  modules: ['components-thirdparty:LiveComponentView']
+})(({ remoteModules }) => {
+  const [LiveComponentView] = remoteModules;
+  const searchParams = qs.parse(window.location.search.slice(1));
+  return <LiveComponentView {...Object.assign({}, searchParams)} />;
+});
 
 export default App;
