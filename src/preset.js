@@ -33,9 +33,7 @@ export const globalInit = async () => {
         ...registry, remote: 'components-view', defaultVersion: '0.1.40'
       }, 'components-thirdparty': {
         ...registry,
-        url: 'http://localhost:3050',
-        tpl: '{{url}}',
-        remote: 'components-thirdparty', defaultVersion: '0.1.32'
+        remote: 'components-thirdparty', defaultVersion: '0.1.33'
       }
     }
   });
