@@ -23,7 +23,7 @@ export const globalInit = async () => {
     url: 'https://cdn.leapin-ai.com', tpl: '{{url}}/components/@kne-components/{{remote}}/{{version}}/build'
   };
   const componentsCoreRemote = {
-    ...registry, remote: 'components-core', defaultVersion: '0.4.57'
+    ...registry, remote: 'components-core', defaultVersion: '0.5.22'
   };
   remoteLoaderPreset({
     remotes: {
@@ -32,10 +32,13 @@ export const globalInit = async () => {
       }, 'components-view': {
         ...registry, remote: 'components-view', defaultVersion: '0.1.40'
       }, 'components-thirdparty': {
-        ...registry, remote: 'components-thirdparty', defaultVersion: '0.1.12'
+        ...registry,
+        url: 'http://localhost:3050',
+        tpl: '{{url}}',
+        remote: 'components-thirdparty', defaultVersion: '0.1.32'
       }
     }
   });
 
-  return {};
+  return {ajax};
 };

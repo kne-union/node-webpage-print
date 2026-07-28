@@ -1,3 +1,33 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+  min-width: 1200px;
+}
+
+.live-editor-full {
+  height: 100vh !important;
+  overflow: hidden;
+}
+
+.access-url-modal {
+  .access-url-hint {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .access-url-compact {
+    width: 100%;
+  }
+
+  .access-url-input {
+    font-size: 12px;
+  }
+}
+
+
 .error-message {
   pre {
     display: block;

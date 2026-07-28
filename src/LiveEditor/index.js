@@ -1,6 +1,6 @@
-import { Flex, Typography, Card, Button, Segmented, Descriptions, ColorPicker, Alert, Input } from 'antd';
-import { useState } from 'react';
-import { EyeOutlined } from '@ant-design/icons';
+import { Flex, Typography, Button, Segmented, Tooltip, Input, Space, App } from 'antd';
+import { useRef, useState } from 'react';
+import { CopyOutlined, EyeOutlined, GlobalOutlined } from '@ant-design/icons';
 import qs from 'qs';
 import { encode } from 'plantuml-encoder';
 import { createWithRemoteLoader } from '@kne/remote-loader';
@@ -30,71 +30,128 @@ const defaultContent = encode(JSON.stringify({
 </div>`
 }));
 
+// 保持引用稳定，避免 LiveComponentEditor / 预览因 props 身份变化反复重挂载
+const EDITOR_LIBS = { lodash, dayjs, qs };
+const EDITOR_SITES = [{ host: 'localStorage:webpage-print-editor', name: '本地站点' }];
+const transformContentUrl = url =>
+  `${window.location.origin}/?contentUrl=${encodeURIComponent(url)}`;
+
+const OUTPUT_OPTIONS = [
+  {
+    value: '/',
+    label: '组件',
+    hint: '在浏览器中直接打开并渲染当前组件'
+  },
+  {
+    value: '/api/v1/parseRemoteModuleToPdf',
+    label: 'PDF',
+    hint: '请求导出接口，生成 PDF 文件'
+  },
+  {
+    value: '/api/v1/parseRemoteModuleToPhoto',
+    label: '图片',
+    hint: '请求导出接口，生成图片文件'
+  }
+];
+
+const AccessUrlContent = ({ getContent }) => {
+  const { message } = App.useApp();
+  const [outputType, setOutputType] = useState('/');
+  const targetUrl = `${window.location.origin}${outputType}?${qs.stringify({
+    content: getContent()
+  })}`;
+  const currentOption = OUTPUT_OPTIONS.find(item => item.value === outputType) || OUTPUT_OPTIONS[0];
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(targetUrl);
+      message.success('链接已复制');
+    } catch (error) {
+      console.error(error);
+      message.error('复制失败');
+    }
+  };
+
+  return (
+    <Flex vertical gap={16} className="access-url-modal">
+      <Flex vertical gap={8}>
+        <Typography.Text strong>输出类型</Typography.Text>
+        <Segmented
+          block
+          value={outputType}
+          onChange={setOutputType}
+          options={OUTPUT_OPTIONS.map(({ value, label }) => ({ value, label }))}
+        />
+        <Typography.Text type="secondary" className="access-url-hint">
+          {currentOption.hint}
+        </Typography.Text>
+      </Flex>
+
+      <Flex vertical gap={8}>
+        <Typography.Text strong>访问链接</Typography.Text>
+        <Space.Compact className="access-url-compact">
+          <Input value={targetUrl} readOnly className="access-url-input" />
+          <Tooltip title="复制">
+            <Button icon={<CopyOutlined />} onClick={handleCopy} />
+          </Tooltip>
+          <Tooltip title="打开">
+            <Button icon={<EyeOutlined />} href={targetUrl} target="_blank" rel="noreferrer" />
+          </Tooltip>
+        </Space.Compact>
+      </Flex>
+    </Flex>
+  );
+};
+
+const AccessUrlButton = createWithRemoteLoader({
+  modules: ['components-core:Modal@useModal']
+})(({ remoteModules, getContent }) => {
+  const [useModal] = remoteModules;
+  const modal = useModal();
+
+  return (
+    <Tooltip title="访问地址">
+      <Button
+        icon={<GlobalOutlined />}
+        onClick={() => {
+          modal({
+            title: '访问地址',
+            footer: null,
+            width: 640,
+            children: (
+              <App>
+                <AccessUrlContent getContent={getContent} />
+              </App>
+            )
+          });
+        }}
+      />
+    </Tooltip>
+  );
+});
 
 const LiveEditor = createWithRemoteLoader({
   modules: ['components-thirdparty:LiveComponentEditor']
 })(({ remoteModules }) => {
   const [LiveComponentEditor] = remoteModules;
   const searchParams = qs.parse(window.location.search.slice(1));
-  const [params, setParams] = useState({ content: defaultContent, selector: 'print-el' });
-  const [outputType, setOutputType] = useState('/');
-  const { content, props, themeColor, locale, selector } = params;
-  const [value, setValue] = useState(searchParams.content || content);
+  // value 仅用于生成访问地址；defaultValue 只作初始值，不能与 onChange 回写形成环
+  const [value, setValue] = useState(() => searchParams.content || defaultContent);
+  const [initialValue] = useState(value);
+  const valueRef = useRef(value);
+  valueRef.current = value;
 
-  const targetUrl = `${window.location.origin}${outputType}?${qs.stringify({
-    content: value, props, themeColor, locale, options: {
-      selector: selector
-    }
-  })}`;
-
-  return <Flex vertical gap={8} style={{ padding: '24px' }}>
-    <Card size="small" title="访问地址">
-      <Flex vertical gap={4}>
-        <div>
-          <Segmented value={outputType} onChange={setOutputType}
-                     options={[{ value: '/', label: '组件' }, {
-                       value: '/api/v1/parseRemoteModuleToPdf', label: 'PDF'
-                     }, { value: '/api/v1/parseRemoteModuleToPhoto', label: '图片' }]} />
-        </div>
-        <div>
-          <Typography.Text copyable>
-            {targetUrl}
-          </Typography.Text>
-          <Button href={targetUrl} type="link" target="_blank" size="small" icon={<EyeOutlined />} />
-        </div>
-      </Flex>
-    </Card>
-    <Card size="small" title="属性">
-      <Descriptions items={[{
-        label: '主题色', children: <ColorPicker value={themeColor} onChange={(color) => {
-          setParams((params) => {
-            return Object.assign({}, params, { themeColor: color.toHexString() });
-          });
-        }} />
-      }, {
-        label: '语言', children: <Segmented value={locale || 'zh-CN'} onChange={(value) => {
-          setParams((params) => {
-            return Object.assign({}, params, { locale: value });
-          });
-        }} options={[{ value: 'zh-CN', label: '中文' }, {
-          value: 'en-US', label: '英文'
-        }]} />
-      }, {
-        label: '选择器', children: <Flex vertical gap={4}>
-          <Input value={selector} onChange={(e) => {
-            const selector = e.target.value;
-            setParams((params) => {
-              return Object.assign({}, params, { selector });
-            });
-          }} />
-          <Alert
-            message="css选择器，只渲染选择器对应的元素，PDF和图片输出有效。输入不存在的选择器将会不能正确输出结果，渲染整个页面传空即可"
-            size="small" />
-        </Flex>
-      }]} />
-    </Card>
-    <LiveComponentEditor defaultValue={value} onChange={setValue} libs={{ lodash, dayjs, qs }}/>
-  </Flex>;
+  return (
+    <LiveComponentEditor
+      className="live-editor-full"
+      defaultValue={initialValue}
+      onChange={setValue}
+      libs={EDITOR_LIBS}
+      sites={EDITOR_SITES}
+      transformContentUrl={transformContentUrl}
+      toolbarExtra={<AccessUrlButton getContent={() => valueRef.current} />}
+    />
+  );
 });
 
 export default LiveEditor;
